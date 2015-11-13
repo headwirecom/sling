@@ -17,6 +17,7 @@
 package org.apache.sling.ide.io;
 
 import org.apache.sling.ide.transport.FileInfo;
+import org.apache.sling.ide.transport.FileInfo2;
 import org.apache.sling.ide.transport.ResourceProxy;
 
 /**
@@ -26,14 +27,14 @@ import org.apache.sling.ide.transport.ResourceProxy;
  */
 public class ResourceAndInfo {
     private final ResourceProxy resource;
-    private final FileInfo info;
+    private final FileInfo2 info;
     private final boolean onlyWhenMissing;
 
-    public ResourceAndInfo(ResourceProxy resource, FileInfo info) {
+    public ResourceAndInfo(ResourceProxy resource, FileInfo2 info) {
         this(resource, info, false);
     }
 
-    public ResourceAndInfo(ResourceProxy resource, FileInfo info, boolean onlyIfMissing) {
+    public ResourceAndInfo(ResourceProxy resource, FileInfo2 info, boolean onlyIfMissing) {
         this.resource = resource;
         this.info = info;
         this.onlyWhenMissing = onlyIfMissing;
@@ -43,7 +44,7 @@ public class ResourceAndInfo {
         return resource;
     }
 
-    public FileInfo getInfo() {
+    public FileInfo2 getInfo() {
         return info;
     }
 

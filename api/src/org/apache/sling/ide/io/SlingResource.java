@@ -23,10 +23,16 @@ public interface SlingResource {
     /** @return True if this is a folder **/
     public boolean isFolder();
 
+    /** @return True if this is a file **/
+    public boolean isFile();
+
     /** @return The absolute file path of the resource in the IDE in a OS specific format **/
     public String getLocalPath();
 
-    /** @return The relative resource path in an OS independent format **/
+    /** @return The resource file (relative to the sync direectory) path of the resource in the IDE in a OS specific format **/
+    public String getResourceLocalPath();
+
+    /** @return The Sling Resource Path **/
     public String getResourcePath();
 
     /** @return The Input Stream to read the content from the resource if it is a file otherwise returns null **/
@@ -37,13 +43,22 @@ public interface SlingResource {
 
     /**
      * @param childFileName Name of the Child File
-     *  @return Child Resource if this is a folder and if child is found by name
-     *  **/
+     * @return Child Resource if this is a folder and if child is found by name
+     **/
     public SlingResource findChild(String childFileName);
+
+    /**
+     * @param childPath Path of the child relative to the
+     * @return Child Resource if this is a folder and if child is found by name
+     **/
+    public SlingResource findChildByPath(String childPath);
 
     /** @return List of all Sling Resource Children from IDE **/
     public List<SlingResource> getLocalChildren();
 
     /** @return True if the file or folder exists locally / IDE **/
     public boolean existsLocally();
+
+    /** @return True if the file or folder exists remotely / Sling **/
+    public boolean existsRemotely();
 }
