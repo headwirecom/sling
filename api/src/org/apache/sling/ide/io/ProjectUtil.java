@@ -33,11 +33,20 @@ public interface ProjectUtil {
     public SlingResource getSyncDirectory(SlingResource resource);
 
     /**
-     * Creates a Sling Resource from a Local Path
+     * Creates a Sling Resource from a Relative Local Path to the Sync Directory
      * @param resourcePath Local (IDE) path that points to a resource. The path can be OS dependent, even with mixed
      *                     folder separators.
-     * @param syncDirectory If not null the Resource Path is a resource path relative to this Sync Directory
+     * @param syncDirectory Resource Path is a resource path relative to this Sync Directory
      * @return A local sling resource
      */
     public SlingResource getResourceFromPath(String resourcePath, SlingResource syncDirectory);
+
+    /**
+     * Creates a Sling Resource from an Absolute Local Path
+     * @param resourcePath Local (IDE) path that points to a resource. The path can be OS dependent, even with mixed
+     *                     folder separators.
+     * @param project Sling Project
+     * @return A local sling resource
+     */
+    public SlingResource getResourceFromPath(String resourcePath, SlingProject project);
 }

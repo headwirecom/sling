@@ -16,23 +16,36 @@
  */
 package org.apache.sling.ide.io;
 
-import org.apache.sling.ide.filter.Filter;
-
 /**
- * Created by schaefa on 11/9/15.
+ * <p/>
+ * This interface is implemented by objects that visit resource trees.
+ * <p>
+ * Usage:
+ * <pre>
+ * class Visitor implements SlingResourceVisitor {
+ * public boolean visit(IResource res) {
+ * // your code here
+ * return true;
+ * }
+ * }
+ * SlingResource root = ...;
+ * root.accept(new Visitor());
+ * </pre>
+ * </p>
+ * <p>
+ * Clients may implement this interface.
+ * </p>
+ *
+ * @see SlingResource#accept(SlingResourceVisitor)
  */
-public interface SlingProject {
-
+public interface SlingResourceVisitor {
     /**
-     * Find a File by the absolute Path
-     * @param path Absolute Path to a File
-     * @return Sling Resource if found otherwise null
+     * Visits the given resource.
+     *
+     * @param resource the resource to visit
+     * @return <code>true</code> if the resource's members should
+     * be visited; <code>false</code> if they should be skipped
+     * @throws ConnectorException if the visit fails for some reason.
      */
-    public SlingResource findFileByPath(String path);
-
-    /** @return Sling Resource of the Sync Directory **/
-    public SlingResource getSyncDirectory();
-
-    /** Loads the META-INF/filter.xml file **/
-    public Filter loadFilter() throws ConnectorException;
+    public boolean visit(SlingResource resource) throws ConnectorException;
 }

@@ -16,23 +16,8 @@
  */
 package org.apache.sling.ide.io;
 
-import org.apache.sling.ide.filter.Filter;
-
 /**
  * Created by schaefa on 11/9/15.
  */
-public interface SlingProject {
-
-    /**
-     * Find a File by the absolute Path
-     * @param path Absolute Path to a File
-     * @return Sling Resource if found otherwise null
-     */
-    public SlingResource findFileByPath(String path);
-
-    /** @return Sling Resource of the Sync Directory **/
-    public SlingResource getSyncDirectory();
-
-    /** Loads the META-INF/filter.xml file **/
-    public Filter loadFilter() throws ConnectorException;
+public interface SlingServer {
 }

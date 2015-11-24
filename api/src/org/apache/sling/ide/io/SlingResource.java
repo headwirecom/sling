@@ -16,6 +16,7 @@
  */
 package org.apache.sling.ide.io;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -52,10 +53,17 @@ public interface SlingResource {
     public String getResourcePath();
 
     /** @return The Input Stream to read the content from the resource if it is a file otherwise returns null **/
-    public InputStream getContentStream();
+    public InputStream getContentStream() throws IOException;
 
     /** @return Parent of the Sling Resource or null if this is the sync directory **/
     public SlingResource getParent();
+
+    /**
+     * Find a resource with the given name in itself or of one of its parents
+     * @param name Name of the Parent to be found
+     * @return Sling Resource of the Parent with the given name or null if not found
+     */
+    public SlingResource findInParentByName(String name);
 
     /**
      * @param childFileName Name of the Child File
@@ -77,4 +85,9 @@ public interface SlingResource {
 
     /** @return True if the file or folder exists remotely / Sling **/
     public boolean existsRemotely();
+
+    public void accept(SlingResourceVisitor visitor) throws ConnectorException;
+
+    public void accept(SlingResourceVisitor visitor, int depth, int memberFlags) throws ConnectorException;
+
 }
