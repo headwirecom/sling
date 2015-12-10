@@ -21,6 +21,7 @@ import org.apache.sling.ide.filter.Filter;
 /**
  * Created by schaefa on 11/9/15.
  */
+@Deprecated
 public interface ProjectUtil {
 
     public Filter loadFilter(SlingProject project);

@@ -23,5 +23,4 @@ package org.apache.sling.ide.io;
  */
 public interface ServiceProvider {
     public PluginLogger createPluginLogger();
-    public ProjectUtil createProjectUtil();
 }

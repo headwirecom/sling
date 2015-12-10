@@ -16,6 +16,8 @@
  */
 package org.apache.sling.ide.io;
 
+import org.apache.sling.ide.filter.Filter;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -90,4 +92,16 @@ public interface SlingResource {
 
     public void accept(SlingResourceVisitor visitor, int depth, int memberFlags) throws ConnectorException;
 
+    /** @return Sling Resource of the Sync Directory of this Resource or null if not applicable **/
+    public SlingResource getSyncDirectory();
+
+    /**
+     * Tries to find the resoruce with the given path relative to the Sync Directory
+     * @param resourcePath Local (IDE) path that points to a resource. The path can be OS dependent, even with mixed
+     *                     folder separators.
+     * @return Sling Resource if found otherwise null
+     */
+    public SlingResource getResourceFromPath(String resourcePath);
+
+    public Filter loadFilter() throws ConnectorException;
 }

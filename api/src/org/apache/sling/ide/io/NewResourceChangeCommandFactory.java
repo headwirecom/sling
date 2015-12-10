@@ -17,8 +17,6 @@
 package org.apache.sling.ide.io;
 
 import org.apache.commons.io.IOUtils;
-//import org.apache.sling.ide.eclipse.core.ProjectUtil;
-//import org.apache.sling.ide.eclipse.core.ResourceUtil;
 import org.apache.sling.ide.filter.Filter;
 import org.apache.sling.ide.filter.FilterResult;
 import org.apache.sling.ide.serialization.SerializationDataBuilder;
@@ -32,19 +30,7 @@ import org.apache.sling.ide.transport.Repository;
 import org.apache.sling.ide.transport.RepositoryException;
 import org.apache.sling.ide.transport.ResourceProxy;
 import org.apache.sling.ide.util.PathUtil;
-//import org.eclipse.core.resources.IFile;
-//import org.eclipse.core.resources.IFolder;
-//import org.eclipse.core.resources.IProject;
-//import org.eclipse.core.resources.IResource;
-//import org.eclipse.core.resources.ResourcesPlugin;
-//import org.eclipse.core.runtime.CoreException;
-//import org.eclipse.core.runtime.IPath;
-//import org.eclipse.core.runtime.IStatus;
-//import org.eclipse.core.runtime.Path;
-//import org.eclipse.core.runtime.Status;
-//import org.eclipse.ui.statushandlers.StatusManager;
 
-//import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -98,7 +84,7 @@ public class NewResourceChangeCommandFactory {
             return null;
         }
         
-        CommandContext context = new CommandContext(ServiceFactory.getProjectUtil().loadFilter(resource.getProject()));
+        CommandContext context = new CommandContext(resource.loadFilter());
 
         if (rai.isOnlyWhenMissing()) {
             return repository.newAddOrUpdateNodeCommand(context, rai.getInfo(), rai.getResource(),
@@ -137,9 +123,9 @@ public class NewResourceChangeCommandFactory {
         ServiceFactory.getPluginLogger().trace("For {0} built fileInfo {1}", resource, info);
 
         // THe sync directory is the root resource with only an IDE part
-        SlingResource syncDirectory = ServiceFactory.getProjectUtil().getSyncDirectory(resource);
+        SlingResource syncDirectory = resource.getSyncDirectory();
 
-        Filter filter = ServiceFactory.getProjectUtil().loadFilter(resource.getProject());
+        Filter filter = resource.loadFilter();
 
         ResourceProxy resourceProxy = null;
 
@@ -160,7 +146,8 @@ public class NewResourceChangeCommandFactory {
                     SlingResource parent = resource.getParent();
                     int endIndex = parent.getName().length() - DIR_EXTENSION.length();
                     String newName = parent.getName().substring(0, endIndex);
-                    info = new FileInfo2(parent, newName);
+                    SlingResource child = parent.getParent().findChild(newName);
+                    info = new FileInfo2(child, newName);
 
                     ServiceFactory.getPluginLogger()
                             .trace("Adjusted original name from {0} to {1}", resource.getName(), newName);
@@ -180,8 +167,8 @@ public class NewResourceChangeCommandFactory {
 
             // TODO - move logic to serializationManager
             // possible .dir serialization holder
-//AS TODO: It looks liek there is also the possibility that the .content.xml file was handled but there is a folder
-//AS TODOL that is named '_jcr_content' which will corrupt the original setting
+//AS TODO: It looks like there is also the possibility that the .content.xml file was handled but there is a folder
+//AS TODO: that is named '_jcr_content' which will corrupt the original setting
             if(resource.isFolder()) {
                 if(resource.getLocalPath().contains("_jcr_content")) {
                     SlingResource parent = resource.findInParentByName("_jcr_content");
@@ -258,11 +245,9 @@ public class NewResourceChangeCommandFactory {
             return FilterResult.ALLOW;
         }
 
-        SlingResource contentSyncResource = ServiceFactory.getProjectUtil().getSyncDirectory(resource);
-
         String repositoryPath = resourceProxy != null ?
             resourceProxy.getPath() :
-            getRepositoryPathForDeletedResource(resource, contentSyncResource);
+            getRepositoryPathForDeletedResource(resource);
 
         FilterResult filterResult = filter.filter(repositoryPath);
 
@@ -271,9 +256,7 @@ public class NewResourceChangeCommandFactory {
         return filterResult;
     }
 
-    private String getRepositoryPathForDeletedResource(SlingResource resource, SlingResource contentSyncResource) {
-        String filePath = serializationManager.getBaseResourcePath(resource.getLocalPath());
-
+    private String getRepositoryPathForDeletedResource(SlingResource resource/*, SlingResource contentSyncResource*/) {
         String repositoryPath = serializationManager.getRepositoryPath(
             resource.getResourcePath()
         );
@@ -302,7 +285,7 @@ public class NewResourceChangeCommandFactory {
         //AS NOTE: not sure what to do here. The Serialization Manager might not be changeable and so we have to deal
         //AS NOTE: OS specific file paths but then where to put the logic?
         String serializationFilePath = serializationManager.getSerializationFilePath(resourceLocation, serializationKind);
-        SlingResource serializationResource = ServiceFactory.getProjectUtil().getResourceFromPath(serializationFilePath, syncDirectory);
+        SlingResource serializationResource = syncDirectory.getResourceFromPath(serializationFilePath);
 
         if (serializationResource == null && changedResource.isFolder()) {
             ResourceProxy dataFromCoveringParent = findSerializationDataFromCoveringParent(
@@ -362,7 +345,7 @@ public class NewResourceChangeCommandFactory {
             logger.trace("Looking for serialization data in {0}", possibleSerializationFilePath);
 
             if (serializationManager.isSerializationFile(possibleSerializationFilePath)) {
-                SlingResource possibleSerializationResource = ServiceFactory.getProjectUtil().getResourceFromPath(possibleSerializationFilePath, syncDirectory.getProject());
+                SlingResource possibleSerializationResource = syncDirectory.getResourceFromPath(possibleSerializationFilePath);
                 if (!possibleSerializationResource.existsLocally()) {
                     logger.trace("Potential serialization data file {0} does not exist, moving up to the next level",
                         possibleSerializationResource.getResourcePath());
@@ -401,12 +384,9 @@ public class NewResourceChangeCommandFactory {
     private ResourceProxy buildResourceProxy(String resourceLocation, SlingResource serializationResource,
                                              SlingResource syncDirectory, String fallbackPrimaryType, Repository repository
     ) throws ConnectorException, IOException {
-//        if (serializationResource instanceof IFile) {
         if (serializationResource != null && serializationResource.isFile() && serializationResource.existsLocally()) {
-//            IFile serializationFile = (IFile) serializationResource;
             InputStream contents = null;
             try {
-//                contents = serializationFile.getContents();
                 contents = serializationResource.getContentStream();
 //AS TODO: I think that path needs to be make OS specific
                 String serializationFilePath =  serializationResource.getResourceLocalPath();
@@ -544,9 +524,9 @@ public class NewResourceChangeCommandFactory {
             return null;
         }
 
-        SlingResource syncDirectory = ServiceFactory.getProjectUtil().getSyncDirectory(resource);
+        SlingResource syncDirectory = resource.getSyncDirectory();
 
-        Filter filter = ServiceFactory.getProjectUtil().loadFilter(syncDirectory.getProject());
+        Filter filter = syncDirectory.loadFilter();
 
         FilterResult filterResult = getFilterResult(resource, null, filter);
         if (filterResult == FilterResult.DENY || filterResult == FilterResult.PREREQUISITE) {
@@ -554,7 +534,7 @@ public class NewResourceChangeCommandFactory {
         }
         
         String resourceLocation = getRepositoryPathForDeletedResource(
-            resource, ServiceFactory.getProjectUtil().getSyncDirectory(resource)
+            resource
         );
         
         // verify whether a resource being deleted does not signal that the content structure
@@ -567,7 +547,7 @@ public class NewResourceChangeCommandFactory {
         ResourceProxy coveringParentData = findSerializationDataFromCoveringParent(
             resource, syncDirectory,
             resourceLocation,
-            ServiceFactory.getProjectUtil().getResourceFromPath(serializationFilePath, syncDirectory.getProject())
+            syncDirectory.getResourceFromPath(serializationFilePath)
         );
         if (coveringParentData != null) {
             ServiceFactory

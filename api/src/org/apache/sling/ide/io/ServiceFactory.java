@@ -30,11 +30,6 @@ public abstract class ServiceFactory {
         return serviceProvider.createPluginLogger();
     }
 
-    public static final ProjectUtil getProjectUtil() {
-        checkServiceProvider();
-        return serviceProvider.createProjectUtil();
-    }
-
     private static void checkServiceProvider() {
         if(serviceProvider == null) {
             throw new IllegalArgumentException("Service Provider is not set yet");
