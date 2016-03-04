@@ -41,6 +41,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * The <tt>ResourceChangeCommandFactory</tt> creates new {@link # Command commands} correspoding to resource addition,
@@ -169,8 +170,13 @@ public class NewResourceChangeCommandFactory {
             // possible .dir serialization holder
 //AS TODO: It looks like there is also the possibility that the .content.xml file was handled but there is a folder
 //AS TODO: that is named '_jcr_content' which will corrupt the original setting
-            if(resource.isFolder()) {
-                if(resource.getLocalPath().contains("_jcr_content")) {
+//            if(resource.isFolder()) {
+                if(
+                    (resource.getLocalPath().contains("/_jcr_content/") ||
+                        resource.getLocalPath().endsWith("/_jcr_content"))
+                    && !resource.getLocalPath().contains("/_jcr_content/renditions")
+                ) {
+//                if(resource.getLocalPath().contains("_jcr_content")) {
                     SlingResource parent = resource.findInParentByName("_jcr_content");
                     if(parent != null) {
                         SlingResource contentXml = parent.getParent().findChild(".content.xml");
@@ -188,7 +194,7 @@ public class NewResourceChangeCommandFactory {
                         return null;
                     }
                 }
-            }
+//            }
 
             resourceProxy = buildResourceProxyForPlainFileOrFolder(resource, syncDirectory, repository);
         }
@@ -276,16 +282,24 @@ public class NewResourceChangeCommandFactory {
         if (changedResource.isFile()) {
             serializationKind = SerializationKind.FILE;
             fallbackNodeType = Repository.NT_FILE;
+            java.util.logging.Logger.getLogger(getClass().getName()).log(Level.INFO, "Serialization File: ''{0}''", serializationKind);
         } else { // i.e. IResource.FOLDER
             serializationKind = SerializationKind.FOLDER;
             fallbackNodeType = Repository.NT_FOLDER;
+            java.util.logging.Logger.getLogger(getClass().getName()).log(Level.INFO, "Serialization Folder: ''{0}''", serializationKind);
         }
 
         String resourceLocation = changedResource.getResourcePath();
+        java.util.logging.Logger.getLogger(getClass().getName()).log(Level.INFO, "Resource Location: ''{0}''", resourceLocation);
+
         //AS NOTE: not sure what to do here. The Serialization Manager might not be changeable and so we have to deal
         //AS NOTE: OS specific file paths but then where to put the logic?
         String serializationFilePath = serializationManager.getSerializationFilePath(resourceLocation, serializationKind);
+        java.util.logging.Logger.getLogger(getClass().getName()).log(Level.INFO, "Serialization File Path: {0}", serializationFilePath);
         SlingResource serializationResource = syncDirectory.getResourceFromPath(serializationFilePath);
+
+        java.util.logging.Logger.getLogger(getClass().getName()).log(Level.INFO, "Serialization Resource: {0}", serializationResource);
+        java.util.logging.Logger.getLogger(getClass().getName()).log(Level.INFO, "Changed Resource is folder: {0}", changedResource.isFolder());
 
         if (serializationResource == null && changedResource.isFolder()) {
             ResourceProxy dataFromCoveringParent = findSerializationDataFromCoveringParent(
@@ -328,6 +342,7 @@ public class NewResourceChangeCommandFactory {
         PluginLogger logger = ServiceFactory.getPluginLogger();
         logger.trace("Found plain nt:folder candidate at {0}, trying to find a covering resource for it",
                 changedResource.getResourcePath());
+        java.util.logging.Logger.getLogger(getClass().getName()).log(Level.INFO, "Found plain nt:folder candidate at {0}, trying to find a covering resource for it", changedResource.getResourcePath());
         // don't use isRoot() to prevent infinite loop when the final path is '//'
         while ((serializationFilePath = serializationFilePath.getParent()) != null) {
             if (!serializationFilePath.existsLocally()) {
@@ -384,14 +399,19 @@ public class NewResourceChangeCommandFactory {
     private ResourceProxy buildResourceProxy(String resourceLocation, SlingResource serializationResource,
                                              SlingResource syncDirectory, String fallbackPrimaryType, Repository repository
     ) throws ConnectorException, IOException {
+        java.util.logging.Logger.getLogger(getClass().getName()).log(Level.INFO, "Serialization Resource: ''{0}''", serializationResource);
         if (serializationResource != null && serializationResource.isFile() && serializationResource.existsLocally()) {
             InputStream contents = null;
             try {
                 contents = serializationResource.getContentStream();
 //AS TODO: I think that path needs to be make OS specific
                 String serializationFilePath =  serializationResource.getResourceLocalPath();
+                java.util.logging.Logger.getLogger(getClass().getName()).log(Level.INFO, "Serialization File Path: {0}", serializationFilePath);
                 ResourceProxy resourceProxy = serializationManager.readSerializationData(serializationFilePath, contents);
+                java.util.logging.Logger.getLogger(getClass().getName()).log(Level.INFO, "Resource Proxy Path: {0}", resourceProxy.getPath());
+                java.util.logging.Logger.getLogger(getClass().getName()).log(Level.INFO, "Resource Proxy Properties: {0}", resourceProxy.getProperties());
                 normaliseResourceChildren(serializationResource, resourceProxy, syncDirectory, repository);
+                java.util.logging.Logger.getLogger(getClass().getName()).log(Level.INFO, "Resource Proxy: ''{0}''", resourceProxy);
 
                 return resourceProxy;
             } finally {

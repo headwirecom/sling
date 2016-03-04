@@ -16,15 +16,24 @@
  */
 package org.apache.sling.ide.io;
 
-import org.apache.sling.ide.serialization.SerializationManager;
+import org.apache.sling.ide.io.SlingResource;
+import org.apache.sling.ide.io.helpers.TestSlingProject;
+import org.apache.sling.ide.io.helpers.TestSlingResource;
+import org.junit.Test;
+
+import java.io.File;
 
 /**
- * This class is the prototype of the Provider for all IDE specific services
- *
- * Created by schaefa on 11/9/15.
+ * Created by schaefa on 1/25/16.
  */
-public interface ServiceProvider {
-    public PluginLogger createPluginLogger();
+public class TestSlingResourceTest {
 
-    public SerializationManager getSerializationManager();
+    @Test
+    public void testLocalPath() {
+        SlingResource slingResource = new TestSlingResource(
+            new TestSlingProject((new File("target/classes/")).getAbsolutePath()),
+            "org/apache/sling/ide/io/sling-folder-nodetype.xml"
+        );
+        slingResource.getResourceLocalPath();
+    }
 }

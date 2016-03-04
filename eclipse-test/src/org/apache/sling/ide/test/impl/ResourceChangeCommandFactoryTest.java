@@ -69,7 +69,7 @@ public class ResourceChangeCommandFactoryTest {
 
     }
 
-    @Test
+//    @Test
     public void commandForAddedOrUpdatedNtFolder() throws CoreException {
 
         // create a sling:Folder at /content/test-root/nested
