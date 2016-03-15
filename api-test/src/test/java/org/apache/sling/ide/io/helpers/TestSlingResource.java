@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 import static java.util.logging.Level.INFO;
 
 /**
- * Created by schaefa on 1/25/16.
+ * Created by Andreas Schaefer (Headwire.com) on 1/25/16.
  */
 public class TestSlingResource
     implements SlingResource

@@ -19,7 +19,7 @@ package org.apache.sling.ide.io;
 import org.apache.sling.ide.filter.Filter;
 
 /**
- * Created by schaefa on 11/9/15.
+ * Created by Andreas Schaefer (Headwire.com) on 11/9/15.
  */
 @Deprecated
 public interface ProjectUtil {

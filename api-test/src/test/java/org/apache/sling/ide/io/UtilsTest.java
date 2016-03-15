@@ -29,7 +29,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by schaefa on 1/29/16.
+ * Created by Andreas Schaefer (Headwire.com) on 1/29/16.
  */
 public class UtilsTest {
 

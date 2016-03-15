@@ -50,7 +50,7 @@ import org.junit.Test;
 import org.junit.rules.TestName;
 
 /**
- * Created by schaefa on 1/21/16.
+ * Created by Andreas Schaefer (Headwire.com) on 1/21/16.
  */
 public class NewResourceChangeCommandFactoryTest {
 

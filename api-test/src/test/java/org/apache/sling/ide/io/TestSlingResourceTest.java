@@ -24,7 +24,7 @@ import org.junit.Test;
 import java.io.File;
 
 /**
- * Created by schaefa on 1/25/16.
+ * Created by Andreas Schaefer (Headwire.com) on 1/25/16.
  */
 public class TestSlingResourceTest {
 

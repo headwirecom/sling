@@ -17,7 +17,7 @@
 package org.apache.sling.ide.io;
 
 /**
- * Created by schaefa on 11/8/15.
+ * Created by Andreas Schaefer (Headwire.com) on 11/8/15.
  */
 public class ConnectorException
     extends Exception

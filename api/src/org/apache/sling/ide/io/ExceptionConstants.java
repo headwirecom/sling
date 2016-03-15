@@ -17,7 +17,7 @@
 package org.apache.sling.ide.io;
 
 /**
- * Created by schaefa on 2/13/16.
+ * Created by Andreas Schaefer (Headwire.com) on 2/13/16.
  */
 public class ExceptionConstants {
 

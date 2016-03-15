@@ -26,7 +26,7 @@ import java.io.FilenameFilter;
 import java.util.logging.Logger;
 
 /**
- * Created by schaefa on 1/25/16.
+ * Created by Andreas Schaefer (Headwire.com) on 1/25/16.
  */
 public class TestSlingProject
     implements SlingProject

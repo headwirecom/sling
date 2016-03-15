@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * Created by schaefa on 1/29/16.
+ * Created by Andreas Schaefer (Headwire.com) on 1/29/16.
  */
 public class Utils {
 

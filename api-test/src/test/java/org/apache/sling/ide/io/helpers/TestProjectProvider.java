@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  * This class will create a Test Project
  * so that it can be used to jUnit Tests.
  *
- * Created by schaefa on 1/29/16.
+ * Created by Andreas Schaefer (Headwire.com) on 1/29/16.
  */
 public class TestProjectProvider
     extends ExternalResource
