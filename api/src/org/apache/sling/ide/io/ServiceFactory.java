@@ -19,7 +19,7 @@ package org.apache.sling.ide.io;
 /**
  * This Factory class provides Service which implementation are IDE specific
  *
- * Created by schaefa on 11/9/15.
+ * Created by Andreas Schaefer (Headwire.com) on 11/9/15.
  */
 public abstract class ServiceFactory {
 

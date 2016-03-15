@@ -17,19 +17,11 @@
 package org.apache.sling.ide.io;
 
 /**
- * Created by Andreas Schaefer (Headwire.com) on 11/9/15.
+ * Created by Andreas Schaefer (Headwire.com) on 2/13/16.
  */
-public interface PluginLogger {
+public class ExceptionConstants {
 
-    public void error(String message);
+    public static final int COMMAND_EXECUTION_FAILURE = 10;
+    public static final int COMMAND_EXECUTION_UNSUCCESSFUL = 11;
 
-    public void error(String message, Object... parameters);
-
-    public void warn(String message);
-
-    public void warn(String message, Object... parameters);
-
-    public void trace(String message);
-
-    public void trace(String message, Object... parameters);
 }

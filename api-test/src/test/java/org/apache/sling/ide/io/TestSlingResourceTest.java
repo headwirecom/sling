@@ -16,20 +16,24 @@
  */
 package org.apache.sling.ide.io;
 
+import org.apache.sling.ide.io.SlingResource;
+import org.apache.sling.ide.io.helpers.TestSlingProject;
+import org.apache.sling.ide.io.helpers.TestSlingResource;
+import org.junit.Test;
+
+import java.io.File;
+
 /**
- * Created by Andreas Schaefer (Headwire.com) on 11/9/15.
+ * Created by Andreas Schaefer (Headwire.com) on 1/25/16.
  */
-public interface PluginLogger {
+public class TestSlingResourceTest {
 
-    public void error(String message);
-
-    public void error(String message, Object... parameters);
-
-    public void warn(String message);
-
-    public void warn(String message, Object... parameters);
-
-    public void trace(String message);
-
-    public void trace(String message, Object... parameters);
+    @Test
+    public void testLocalPath() {
+        SlingResource slingResource = new TestSlingResource(
+            new TestSlingProject((new File("target/classes/")).getAbsolutePath()),
+            "org/apache/sling/ide/io/sling-folder-nodetype.xml"
+        );
+        slingResource.getResourceLocalPath();
+    }
 }

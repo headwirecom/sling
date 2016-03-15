@@ -16,11 +16,15 @@
  */
 package org.apache.sling.ide.io;
 
+import org.apache.sling.ide.serialization.SerializationManager;
+
 /**
  * This class is the prototype of the Provider for all IDE specific services
  *
- * Created by schaefa on 11/9/15.
+ * Created by Andreas Schaefer (Headwire.com) on 11/9/15.
  */
 public interface ServiceProvider {
     public PluginLogger createPluginLogger();
+
+    public SerializationManager getSerializationManager();
 }

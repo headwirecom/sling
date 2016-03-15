@@ -18,7 +18,34 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-  <parent>
+    <dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>6.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling.ide</groupId>
+            <artifactId>org.apache.sling.ide.api</artifactId>
+            <version>1.0.9-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.core</groupId>
+            <artifactId>resources</artifactId>
+            <version>3.3.0-v20070604</version>
+        </dependency>
+        <dependency>
+            <groupId>p2.osgi.bundle</groupId>
+            <artifactId>org.eclipse.ui.workbench</artifactId>
+            <version>3.105.2.v20140211-1711</version>
+        </dependency>
+    </dependencies>
+    <parent>
     <groupId>org.apache.sling.ide</groupId>
     <artifactId>reactor</artifactId>
     <version>1.0.9-SNAPSHOT</version>

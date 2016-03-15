@@ -25,6 +25,8 @@
   </parent>
   <artifactId>org.apache.sling.ide.api</artifactId>
   <packaging>eclipse-plugin</packaging>
+    <!--AS TODO: This is not working because impl-vlt expects this to be an OSGi Bundle -->
+  <!--<packaging>jar</packaging>-->
   <name>Sling IDE Tools: API</name>
 
   <scm>
@@ -34,6 +36,7 @@
   </scm>
   
   <build>
+      <sourceDirectory>src</sourceDirectory>
     <!-- ensure that extra files are picked up by the maven-source-plugin -->
     <resources>
         <resource>
@@ -59,11 +62,37 @@
   </build>
 
     <!--AS TODO: This is here to make the dependency available to IntelliJ for development event though not needed building from Command Line -->
-    <dependencies>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.4</version>
-        </dependency>
-    </dependencies>
+    <!--AS TODO: This is not working because impl-vlt expects this to be an OSGi Bundle -->
+    <!--<dependencies>-->
+        <!--<dependency>-->
+            <!--<groupId>commons-io</groupId>-->
+            <!--<artifactId>commons-io</artifactId>-->
+            <!--<version>2.4</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>javax.jcr</groupId>-->
+            <!--<artifactId>jcr</artifactId>-->
+            <!--<version>2.0</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.osgi</groupId>-->
+            <!--<artifactId>org.osgi.core</artifactId>-->
+            <!--<version>6.0.0</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.osgi</groupId>-->
+            <!--<artifactId>org.osgi.compendium</artifactId>-->
+            <!--<version>5.0.0</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>commons-httpclient</groupId>-->
+            <!--<artifactId>commons-httpclient</artifactId>-->
+            <!--<version>3.1</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.json</groupId>-->
+            <!--<artifactId>json</artifactId>-->
+            <!--<version>20140107</version>-->
+        <!--</dependency>-->
+    <!--</dependencies>-->
 </project>

@@ -25,6 +25,8 @@
   </parent>
   <artifactId>org.apache.sling.ide.impl-resource</artifactId>
   <packaging>eclipse-plugin</packaging>
+    <!--AS TODO: This is not working because impl-vlt expects this to be an OSGi Bundle -->
+  <!--<packaging>jar</packaging>-->
   <name>Sling IDE Tools: Resource-based Implementation</name>
 
   <scm>
@@ -32,8 +34,18 @@
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/sling/trunk/tooling/ide/impl-resource</developerConnection>
     <url>http://svn.apache.org/viewvc/sling/trunk/tooling/ide/impl-resource</url>
   </scm>
-  
+
+    <!--AS TODO: This is not working because impl-vlt expects this to be an OSGi Bundle -->
+    <!--<dependencies>-->
+        <!--<dependency>-->
+            <!--<groupId>${project.groupId}</groupId>-->
+            <!--<artifactId>org.apache.sling.ide.api</artifactId>-->
+            <!--<version>${project.version}</version>-->
+        <!--</dependency>-->
+    <!--</dependencies>-->
+
   <build>
+      <sourceDirectory>src</sourceDirectory>
     <!-- ensure that extra files are picked up by the maven-source-plugin -->
     <resources>
         <resource>

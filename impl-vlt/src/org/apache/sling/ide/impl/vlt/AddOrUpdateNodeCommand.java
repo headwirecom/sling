@@ -92,23 +92,22 @@ public class AddOrUpdateNodeCommand extends JcrCommand<Void> {
         boolean nodeExists = session.nodeExists(path);
 
         Node node;
-        if (nodeExists) {
+        if(nodeExists) {
             node = session.getNode(path);
-            getLogger().trace("Found existing node at {0} with primaryType {1}", path,
-                    node.getPrimaryNodeType().getName());
+            getLogger().trace("Found existing node at {0} with primaryType {1}", path, node.getPrimaryNodeType().getName());
         } else {
             node = createNode(resource, session);
             getLogger().trace("Created node at {0} with primaryType {1}", path, node.getPrimaryNodeType().getName());
         }
 
-        if (nodeExists && getFlags().contains(CommandExecutionFlag.CREATE_ONLY_WHEN_MISSING)) {
+        if(nodeExists && getFlags().contains(CommandExecutionFlag.CREATE_ONLY_WHEN_MISSING)) {
             return;
         }
 
         updateNode(node, resource);
         processDeletedNodes(node, resource);
 
-        for (ResourceProxy child : resource.getCoveredChildren()) {
+        for(ResourceProxy child : resource.getCoveredChildren()) {
             update(child, session);
         }
     }
