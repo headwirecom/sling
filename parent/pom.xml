@@ -21,14 +21,14 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>18</version>
+        <version>17</version>
         <relativePath />
     </parent>
 
     <groupId>org.apache.sling</groupId>
     <artifactId>sling</artifactId>
     <packaging>pom</packaging>
-    <version>31-SNAPSHOT</version>
+    <version>27-SNAPSHOT</version>
 
     <name>Apache Sling (Parent)</name>
     <description>The parent project for Apache Sling</description>
@@ -37,12 +37,7 @@
     <url>http://sling.apache.org</url>
 
     <prerequisites>
-        <!-- This defines only the minimum version for plugins, but not for the build
-             See http://maven.apache.org/ref/3.3.9/maven-model/maven.html#class_prerequisites.
-             Therefore the enforcer plugin needs to verify the maven version. See configuration
-             of the plugin further below
-        -->
-        <maven>3.3.9</maven>
+        <maven>3.0.4</maven>
     </prerequisites>
 
 
@@ -59,13 +54,13 @@
         <!--
             Java API and class file compliance. This property supports
             one of three values:
-              - 6: Java 6
-              - 7: Java 7 (default)
+              - 6: Java 6 (default)
+              - 7: Java 7
               - 8: Java 8
             Using anything else causes the set-bundle-required-execution-environment
             to fail the build with an exception
         -->
-        <sling.java.version>7</sling.java.version>
+        <sling.java.version>6</sling.java.version>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
@@ -82,7 +77,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.4</version>
+                <version>2.10.2</version>
                 <reportSets>
                     <reportSet>
                         <reports>
@@ -141,9 +136,6 @@
                                     </message>
                                     <version>1.7.0</version>
                                 </requireJavaVersion>
-                                <requireMavenVersion>
-                                    <version>3.3.9</version>
-                                </requireMavenVersion>
                             </rules>
                         </configuration>
                     </execution>
@@ -170,6 +162,24 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
+                    <execution>
+                        <id>check-memory-task</id>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <target>
+                                <echo>
+**************** WARNING (SLING-443/SLING-1782) ******************************
+On most platforms, you'll get OutOfMemoryErrors when building unless you set
+on 32bit platforms: MAVEN_OPTS="-Xmx256M -XX:MaxPermSize=256M", see SLING-443
+on 64bit platforms: MAVEN_OPTS="-Xmx512M -XX:MaxPermSize=512M", see SLING-1782
+******************************************************************************
+                                </echo>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
                     <execution>
                         <id>set-bundle-required-execution-environment</id>
                         <goals>
@@ -269,16 +279,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.maven.release</groupId>
-                        <artifactId>maven-release-oddeven-policy</artifactId>
-                        <version>2.5.3</version>
-                    </dependency>
-                </dependencies>
                 <configuration>
-                    <projectVersionPolicyId>OddEvenVersionPolicy</projectVersionPolicyId>
-                    <tagBase>https://svn.apache.org/repos/asf/sling/tags</tagBase>
+                    <tagBase>
+                        https://svn.apache.org/repos/asf/sling/tags
+                    </tagBase>
                 </configuration>
             </plugin>
             <plugin>
@@ -306,8 +310,8 @@
                         <exclude>**/*.rej</exclude>
                         <!-- Exclude Java crash log files -->
                         <exclude>hs_err_*.log</exclude>
-                        <!-- Lucene index details (Oak 1.6) -->
-                        <exclude>**/repository/index/*/index-details.txt</exclude>
+                        <!-- Exclude IntelliJ module configuration files -->
+                        <exclude>*.iml</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -340,18 +344,7 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>3.0.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.0.2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.8.2</version>
                     <configuration>
                         <retryFailedDeploymentCount>10</retryFailedDeploymentCount>
                     </configuration>
@@ -359,7 +352,7 @@
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-scr-plugin</artifactId>
-                    <version>1.23.0</version>
+                    <version>1.21.0</version>
                     <!-- As QDox is trying to inspect/load the classes
                          we have to add a slf4j implementation to the
                          class path of the plugin - we usually use
@@ -370,7 +363,7 @@
                         <dependency>
                             <groupId>org.slf4j</groupId>
                             <artifactId>slf4j-simple</artifactId>
-                            <version>1.7.6</version>
+                            <version>1.5.2</version>
                         </dependency>
                     </dependencies>
                     <executions>
@@ -391,13 +384,11 @@
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.0.1</version>
                     <inherited>true</inherited>
                     <configuration>
                         <outputDirectory>${basedir}/target/classes</outputDirectory>
                         <obrRepository>NONE</obrRepository>
-                        <!-- Export SCR metadata to classpath to have them available in unit tests -->
-                        <exportScr>true</exportScr>
                         <instructions>
                             <Bundle-Category>sling</Bundle-Category>
                             <Bundle-DocURL>
@@ -417,22 +408,7 @@
                                 <goal>baseline</goal>
                             </goals>
                         </execution>
-                        <!-- Configure extra execution of 'manifest' in process-classes phase to make sure SCR metadata is generated before unit test runs -->
-                        <execution>
-                            <id>scr-metadata</id>
-                            <goals>
-                                <goal>manifest</goal>
-                            </goals>
-                            <configuration>
-                                <supportIncrementalBuild>true</supportIncrementalBuild>
-                            </configuration>
-                        </execution>
                     </executions>
-                </plugin>
-                <plugin>
-                    <groupId>biz.aQute.bnd</groupId>
-                    <artifactId>bnd-maven-plugin</artifactId>
-                    <version>3.2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -447,7 +423,7 @@
                 <plugin>
                     <groupId>org.apache.sling</groupId>
                     <artifactId>slingstart-maven-plugin</artifactId>
-                    <version>1.7.2</version>
+                    <version>1.3.6</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.cargo</groupId>
@@ -467,7 +443,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>animal-sniffer-maven-plugin</artifactId>
-                    <version>1.15</version>
+                    <version>1.14</version>
                     <configuration>
                         <signature>
                             <groupId>org.codehaus.mojo.signature</groupId>
@@ -516,16 +492,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.18.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>2.18.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.servicemix.tooling</groupId>
-                    <artifactId>depends-maven-plugin</artifactId>
-                    <version>1.3.1</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -1107,30 +1073,22 @@
         <dependencies>
             <dependency>
                 <groupId>org.osgi</groupId>
-                <artifactId>osgi.core</artifactId>
-                <version>6.0.0</version>
+                <artifactId>org.osgi.core</artifactId>
+                <version>4.1.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
-                <artifactId>osgi.cmpn</artifactId>
-                <version>6.0.0</version>
+                <artifactId>org.osgi.compendium</artifactId>
+                <version>4.1.0</version>
                 <scope>provided</scope>
             </dependency>
 
             <!-- Web Application API -->
             <dependency>
                 <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>3.1.0</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <!-- dependency injection annotations -->
-            <dependency>
-                <groupId>javax.inject</groupId>
-                <artifactId>javax.inject</artifactId>
-                <version>1</version>
+                <artifactId>servlet-api</artifactId>
+                <version>2.4</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -1138,7 +1096,7 @@
             <dependency>
                 <groupId>javax.jcr</groupId>
                 <artifactId>jcr</artifactId>
-                <version>2.0</version>
+                <version>1.0</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -1146,37 +1104,29 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.6</version>
+                <version>1.5.2</version>
                 <scope>provided</scope>
             </dependency>
 
-            <!-- OSGi annotations: @Version, @ProviderType, @ConsumerType -->
-           <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>osgi.annotation</artifactId>
-                <version>6.0.1</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <!-- OSGi annotations for DS and metatype -->
+            <!-- OSGi support annotations -->
             <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.service.component.annotations</artifactId>
-                <version>1.3.0</version>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.scr.annotations</artifactId>
+                <version>1.9.12</version>
                 <scope>provided</scope>
             </dependency>
+            <!-- this version must match the version being used by the maven-bundle-plugin -->
             <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.service.metatype.annotations</artifactId>
-                <version>1.3.0</version>
+                <groupId>biz.aQute.bnd</groupId>
+                <artifactId>biz.aQute.bndlib</artifactId>
+                <version>3.0.0</version>
                 <scope>provided</scope>
             </dependency>
-
 
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
-                <version>3.0.0</version>
+                <version>3.0.1</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -1190,49 +1140,29 @@
             <dependency>
                 <groupId>org.jmock</groupId>
                 <artifactId>jmock-junit4</artifactId>
-                <version>2.8.2</version>
+                <version>2.5.1</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
-                <version>1.7.6</version>
+                <version>1.5.2</version>
                 <scope>test</scope>
             </dependency>
 
-
-            <!-- DEPRECATED: Use official OSGi annotations -->
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.scr.annotations</artifactId>
-                <version>1.12.0</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <!-- DEPRECATED : Use the osgi.annotation instead -->
-            <!-- this version must match the version being used by the maven-bundle-plugin -->
-            <dependency>
-                <groupId>biz.aQute.bnd</groupId>
-                <artifactId>biz.aQute.bndlib</artifactId>
-                <version>3.2.0</version>
-                <scope>provided</scope>
-            </dependency>
 
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
+        <!-- OSGi support annotations -->
         <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>osgi.annotation</artifactId>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.scr.annotations</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.service.component.annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.service.metatype.annotations</artifactId>
+            <groupId>biz.aQute.bnd</groupId>
+            <artifactId>biz.aQute.bndlib</artifactId>
         </dependency>
     </dependencies>
 
